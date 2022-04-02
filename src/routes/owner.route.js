@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getPhoto,getAllRoom,getRoom,getUserByID,searchRoom,getRoomById } from '../controllers/owner.controller.js'
+import { getPhoto,getAllRoom,getRoom,getUserByID,searchRoom,getRoomById, updateOwner } from '../controllers/owner.controller.js'
 
 const ownerRoute = Router()
 
@@ -14,6 +14,9 @@ ownerRoute.get("/hello/:rid",getRoom)
 ownerRoute.get('/searchrooms', searchRoom)
 
 ownerRoute.get('/getphoto/:id', getPhoto)
+
+ownerRoute.put('/update/:id', updateOwner)
+
 
 
 

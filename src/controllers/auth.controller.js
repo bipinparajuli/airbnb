@@ -13,6 +13,7 @@ const signup = catchAsync(async (req, res, next) => {
 
 
   form.parse(req, (err, fields, files) => {
+    console.log('hi',fields);
 
     if (err) return next(createHttpError(400, 'Could not process image!!'))
     let { owner,tenant} = fields;
@@ -20,7 +21,6 @@ const signup = catchAsync(async (req, res, next) => {
     if(owner){
 
         fields.owner = JSON.parse(owner)
-        console.log('hi',fields.owner);
         // JSON.parse(owner)
     
         const product = new UserModal(fields);
@@ -79,18 +79,21 @@ console.log("Exit");
 //         },
 //     })
 })
+
 export const login = catchAsync(async (req, res, next) => {
+    console.log("Requested");
     const { email, password } = req.body
     if (!email || !password) {
         return next(createHttpError(400, 'Please provide email and password'))
     }
     const user = await UserModal.findOne({ email }).select('+password')
+    console.log(user);
+
     // check whether user with provided email exists or not
     if (!user) return next(createHttpError('400', 'Invalid credentials'))
     // check whether user's password matches the one provided
     if (!(await user.comparePassword(password)))
     {
-    console.log(user);
 
         return next(createHttpError('400', 'Invalid credentials'))
 

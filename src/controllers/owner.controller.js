@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors'
+import formidable from "formidable"
 
 import { catchAsync } from '../utils/catchAsync.js'
 import UserModal from '../models/user.model.js'
@@ -54,3 +55,23 @@ export const getPhoto = catchAsync(async (req, res, next) => {
       next();
     });
   };
+
+  export const updateOwner = (req,res) => {
+    const form = new formidable.IncomingForm()
+
+
+    form.parse(req, (err, fields, files) => {
+    
+      if(err)console.log(err)
+
+      // console.log(fields);
+
+      let r = JSON.parse(fields.owner)
+
+      // console.log(req.profile.owner,r);
+   let new_owner = ({r,...req.profile.owner})
+console.log(new_owner);
+    res.send(new_owner)
+    })
+
+  }
