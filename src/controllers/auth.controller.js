@@ -13,11 +13,10 @@ const signup = catchAsync(async (req, res, next) => {
 
 
   form.parse(req, (err, fields, files) => {
-    console.log('hi',fields);
 
     if (err) return next(createHttpError(400, 'Could not process image!!'))
     let { owner,tenant} = fields;
-    console.log(owner);
+    console.log(tenant);
     if(owner){
 
         fields.owner = JSON.parse(owner)
@@ -43,13 +42,15 @@ const signup = catchAsync(async (req, res, next) => {
         });
     }
     if(tenant){
+
         fields.tenant = JSON.parse(tenant)
+        console.log(files);
 
         // JSON.parse(owner)
     
         const product = new UserModal(fields);
-    console.log(product);
         if (files.images) {
+
           if (files.images.size > 2097152)
             return next(createHttpError(400, 'Image size exceeds 2mb!!'))
         //   console.log(files.images)
@@ -61,7 +62,7 @@ const signup = catchAsync(async (req, res, next) => {
         // res.json()
     
         product.save((err, product) => {
-            console.log(err);
+            console.log("err",err);
           if (err) return next(createHttpError(400, 'Could not save user!!'));
           res.json(product);
         });
@@ -110,13 +111,14 @@ export const requestPasswordReset = catchAsync(async (req, res, next) => {
     // set the token to expire in 10 minutes
     // send the url to reset password to the user's email
     const token = await user.createPasswordResetToken()
+    console.log(token,user);
     try {
         await sendMail({
             to: user.email,
             subject: 'Reset your Password',
             text: `
             Please send a patch request to following url to reset your password
-            http://localhost:4000/api/v1/users/reset-password/${token}
+            http://localhost:3000/api/v1/users/reset-password/${token}
         `,
         })
     } catch (error) {

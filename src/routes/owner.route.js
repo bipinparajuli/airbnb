@@ -15,7 +15,7 @@ ownerRoute.get('/searchrooms', searchRoom)
 
 ownerRoute.get('/getphoto/:id', getPhoto)
 
-ownerRoute.put('/update/:id', updateOwner)
+ownerRoute.put('/update', updateOwner)
 
 
 

@@ -1,4 +1,5 @@
 import pkg from 'mongoose'
+import mongoose from 'mongoose'
 import { CommonRoomDetails } from './common.data.js'
 
 const {Schema} = pkg
@@ -39,3 +40,7 @@ export const OwnerSchema = new Schema({
         // required: [true, 'Images are required'],
     },
 })
+
+const OwnerModal = mongoose.model('Owner', OwnerSchema)
+
+export default OwnerModal

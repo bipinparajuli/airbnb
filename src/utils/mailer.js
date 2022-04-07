@@ -5,17 +5,20 @@ import nodemailer from 'nodemailer'
 dotenv.config()
 
 const mailTransport = nodemailer.createTransport({
-    host: process.env.MAILTRAP_HOST,
-    port: 25,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    service: 'gmail',
+    secure: true,
     auth: {
-        user: process.env.MAILTRAP_USER,
-        pass: process.env.MAILTRAP_PASSWORD,
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PW,
     },
 })
 export const sendMail = async mailOptions => {
+    console.log(mailOptions);
     try {
         const { messageId } = await mailTransport.sendMail({
-            from: 'Safalta Thapa Inc. <safalta456@gmail.com>',
+            from: 'bipinprjl@gmail.com',
             ...mailOptions,
         })
         console.info(`Mail sent: ${messageId}`)

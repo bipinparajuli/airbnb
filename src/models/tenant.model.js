@@ -42,3 +42,7 @@ export const TenantSchema = new Schema({
         },
     },
 })
+
+const TenantModal = pkg.model('Tenant', TenantSchema)
+
+export default TenantModal
