@@ -16,7 +16,7 @@ const signup = catchAsync(async (req, res, next) => {
 
     if (err) return next(createHttpError(400, 'Could not process image!!'))
     let { owner,tenant} = fields;
-    console.log(tenant);
+    // console.log(tenant);
     if(owner){
 
         fields.owner = JSON.parse(owner)
@@ -24,6 +24,8 @@ const signup = catchAsync(async (req, res, next) => {
     
         const product = new UserModal(fields);
     
+        console.log(files,fields);
+
         if (files.images) {
           if (files.images.size > 2097152)
             return next(createHttpError(400, 'Image size exceeds 2mb!!'))

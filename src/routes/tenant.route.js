@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getAllTenant,getTenant,getTenantById } from '../controllers/tenant.controller.js'
+import { getAllTenant,getTenant,getTenantById,searchTenant } from '../controllers/tenant.controller.js'
 
 
 const tenantRoute = Router()
@@ -7,6 +7,9 @@ const tenantRoute = Router()
 tenantRoute.param("tid",getTenantById)
 
 tenantRoute.get('/getalltenant', getAllTenant)
+
+tenantRoute.get('/searchtenant', searchTenant)
+
 
 tenantRoute.get("/gettenantbyid/:tid",getTenant)
 

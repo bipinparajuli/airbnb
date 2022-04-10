@@ -16,6 +16,7 @@ export const sendToken = (userId, message, res, next) => {
             message,
             data: {
                 token,
+                id:userId
             },
         })
     } catch (error) {

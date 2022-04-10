@@ -18,7 +18,7 @@ export const sendMail = async mailOptions => {
     console.log(mailOptions);
     try {
         const { messageId } = await mailTransport.sendMail({
-            from: 'bipinprjl@gmail.com',
+            from: process.env.EMAIL_USERNAME,
             ...mailOptions,
         })
         console.info(`Mail sent: ${messageId}`)
