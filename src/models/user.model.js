@@ -53,6 +53,12 @@ const UserSchema = mongoose.Schema({
     },
     passwordResetToken: String,
     passwordResetTokenExpiresIn: Date,
+    role:{
+        type:String,
+        enum: ['admin', 'other'],
+        default:"other",
+        required: [true, 'Gender is required'],
+    },
     tenant: {
         type: TenantSchema,
     },

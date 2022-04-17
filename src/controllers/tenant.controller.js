@@ -66,3 +66,11 @@ let  result=[...room]
     // .where({owner:{roomAddress:{district:searchParams.location}}})
     return res.send(result) 
 })
+
+export const deleteTenant = catchAsync(async (req, res, next) =>{
+  console.log("req.tenant");
+  if(req.tenant){
+ let user =  await UserModal.updateOne({"tenant._id":req.tenant._id},{$unset:{tenant:""}})
+    return res.status(200).send("Tenant deleted succesfully");
+  }
+})
