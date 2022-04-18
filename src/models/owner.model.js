@@ -20,7 +20,7 @@ export const OwnerSchema = new Schema({
             enum: ['Kathmandu', 'Bhaktapur', 'Lalitpur'],
         },
         area: {
-            type: String,
+            type: Object,
             required: [true, 'Area is required'],
         },
     },

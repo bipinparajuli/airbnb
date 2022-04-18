@@ -167,20 +167,31 @@ let  result=[...room,...r]
 
 export const getPhoto = catchAsync(async (req, res, next) => {
   
-  // console.log(req.profile.images);
+  console.log(req.profile);
 
   if (req.profile.owner !== undefined && req.profile.owner.images ) {
-
+console.log(1);
     //   res.set("status", 200);
       res.set("Content-Type", req.profile.owner.images.contentType);
       return res.status(200).send(req.profile.owner.images.data);
     }
+    if (req.profile[0].owner ) {
+      console.log(2);
+
+      //   res.set("status", 200);
+      res.set("Content-Type", req.profile[0].owner.images.contentType);
+      return res.status(200).send(req.profile[0].owner.images.data);
+      }
 
     if (req.profile.tenant){
+      console.log(3);
+
       res.set("Content-Type", req.profile.tenant.profileDescription.images.contentType);
       return res.status(200).send(req.profile.tenant.profileDescription.images.data);
     }
     else{
+      console.log(4);
+
       res.set("Content-Type", req.profile.images.contentType);
       return res.status(200).send(req.profile.images.data);
     }
@@ -189,8 +200,9 @@ export const getPhoto = catchAsync(async (req, res, next) => {
 
   export const getRoomById = async (req, res, next, id) => {
    let room =[]
+   console.log(id);
    room = await UserModal.find({"owner._id":id})
-   console.log(room.length);
+   console.log(room);
 
    if(room.length > 0){
     req.room = room[0].owner;
@@ -212,20 +224,29 @@ export const getPhoto = catchAsync(async (req, res, next) => {
   export const getUserByID = async (req, res, next, id) => {
     //   console.log(id);
     let user = await UserModal.findById(id)
+
     // , (err, user) => {
         // console.log(user,err);
         // console.log(user);
-        if (!user || user == null){
+        if (!user | user == null){
+
           user = await OwnerModal.findById(id)
         } 
 
-        if (!user || user == null){
+        if (!user | user == null){
           user = await TenantModal.findById(id)
+
         } 
-        if (!user || user == null){
+        if (!user | user == null){
+
           user = await UserModal.find({"tenant._id":id})
+          console.log("hi",user);
+
         } 
-        console.log(user);
+        if (!user | user == null || user.length == 0){
+
+          user = await UserModal.find({"owner._id":id})
+        } 
 
       if (!user){
         next(createHttpError(500, 'User not found'))
