@@ -32,7 +32,7 @@ export const getAllRoom = catchAsync(async (req, res, next) => {
 })
 
 export const getRoom = catchAsync(async (req, res, next) => {
-  console.log("single");
+  // console.log("single");
   return res.send(req.room)
 })
 
@@ -167,7 +167,7 @@ let  result=[...room,...r]
 
 export const getPhoto = catchAsync(async (req, res, next) => {
   
-  console.log(req.profile);
+  console.log("PROFILE",req.profile);
 
   if (req.profile.owner !== undefined && req.profile.owner.images ) {
 console.log(1);
@@ -212,6 +212,7 @@ console.log(1);
       if ( !room || room.length <=0){
         room = await OwnerModal.findById(id)
         console.log(room);
+        req.room = room
         req.roommodel = room
       } 
       if ( !room || room.length <=0){
@@ -225,12 +226,17 @@ console.log(1);
     //   console.log(id);
     let user = await UserModal.findById(id)
 
+      
+  
+
     // , (err, user) => {
         // console.log(user,err);
         // console.log(user);
         if (!user | user == null){
 
-          user = await OwnerModal.findById(id)
+          user ={
+            owner: await OwnerModal.findById(id)
+          } 
         } 
 
         if (!user | user == null){
@@ -240,7 +246,7 @@ console.log(1);
         if (!user | user == null){
 
           user = await UserModal.find({"tenant._id":id})
-          console.log("hi",user);
+          // console.log("hi",user);
 
         } 
         if (!user | user == null || user.length == 0){
@@ -309,7 +315,7 @@ export const deleteRoom = catchAsync(async (req, res, next) =>{
     return res.status(200).send("Room deleted succesfully");
   }
 
-  if(req.room == undefined && req.roommodel){
+  if(req.room && req.roommodel){
     OwnerModal.deleteOne({_id:req.roommodel._id},(err,data)=>{
       console.log(data);
       if (err) return next(createHttpError(400, 'Could not delete room!!'))
