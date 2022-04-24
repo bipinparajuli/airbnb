@@ -74,3 +74,17 @@ export const deleteTenant = catchAsync(async (req, res, next) =>{
     return res.status(200).send("Tenant deleted succesfully");
   }
 })
+
+export const getProfile = catchAsync(async (req, res, next) =>{
+
+  UserModal.find({"_id":req.params.ids},(err, tenant) => {
+
+    if (err || !tenant) next(createHttpError(500, 'Tenant not found'))
+    
+    console.log(tenant,req.params.ids);
+
+    res.send(tenant)
+
+  
+  })
+})

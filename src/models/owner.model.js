@@ -10,6 +10,10 @@ export const OwnerSchema = new Schema({
         enum: ['Student', 'Employeed', 'Retired', 'Other'],
         required: [true, 'Occupation is required'],
     },
+    facilities:{
+        type:Array
+    }
+    ,
     tenantPreference: {
         type: String,
         enum: ['Male', 'Female', 'Couple', 'Others'],
@@ -31,6 +35,12 @@ export const OwnerSchema = new Schema({
     description: {
         type: String,
         required: [true, 'Description is required'],
+    },
+    name:{
+        type:String
+    },
+    owneremail:{
+type:String
     },
     images: {
         data: Buffer,

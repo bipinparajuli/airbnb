@@ -32,7 +32,9 @@ export const getAllRoom = catchAsync(async (req, res, next) => {
 })
 
 export const getRoom = catchAsync(async (req, res, next) => {
-  // console.log("single");
+  req.room.images == undefined
+  console.log("single",req.room.images );
+
   return res.send(req.room)
 })
 
@@ -167,7 +169,13 @@ let  result=[...room,...r]
 
 export const getPhoto = catchAsync(async (req, res, next) => {
   
-  console.log("PROFILE",req.profile);
+
+  if (req.profile.tenant){
+    console.log(3);
+
+    res.set("Content-Type", req.profile.tenant.profileDescription.images.contentType);
+    return res.status(200).send(req.profile.tenant.profileDescription.images.data);
+  }
 
   if (req.profile.owner !== undefined && req.profile.owner.images ) {
 console.log(1);
@@ -182,13 +190,15 @@ console.log(1);
       res.set("Content-Type", req.profile[0].owner.images.contentType);
       return res.status(200).send(req.profile[0].owner.images.data);
       }
-
-    if (req.profile.tenant){
-      console.log(3);
-
-      res.set("Content-Type", req.profile.tenant.profileDescription.images.contentType);
-      return res.status(200).send(req.profile.tenant.profileDescription.images.data);
-    }
+      if (req.profile[0].tenant ) {
+        // console.log(2);
+        // console.log("PROFILE",req.profile[0].tenant);
+  
+        //   res.set("status", 200);
+        res.set("Content-Type", req.profile[0].tenant.profileDescription.images.contentType);
+        return res.status(200).send(req.profile[0].tenant.profileDescription.images.data);
+        }
+   
     else{
       console.log(4);
 
@@ -200,18 +210,26 @@ console.log(1);
 
   export const getRoomById = async (req, res, next, id) => {
    let room =[]
-   console.log(id);
+  //  console.log(id);
    room = await UserModal.find({"owner._id":id})
-   console.log(room);
 
    if(room.length > 0){
+    // room[0] = {owner:{name:room.fullName,email:room.email}}
+
     req.room = room[0].owner;
+    // console.log("J",req.room.photoId);
+
 
    }
 
       if ( !room || room.length <=0){
         room = await OwnerModal.findById(id)
         console.log(room);
+    //     room={
+    //       photoId : id
+    //     }
+    //  console.log("I",room.photoId);
+
         req.room = room
         req.roommodel = room
       } 
@@ -223,10 +241,10 @@ console.log(1);
   };
 
   export const getUserByID = async (req, res, next, id) => {
-    //   console.log(id);
+      console.log(id);
     let user = await UserModal.findById(id)
 
-      
+      // console.log("USER",user);
   
 
     // , (err, user) => {
@@ -239,18 +257,17 @@ console.log(1);
           } 
         } 
 
-        if (!user | user == null){
+        if (!user | user == null | user == null){
+
           user = await TenantModal.findById(id)
 
         } 
         if (!user | user == null){
 
           user = await UserModal.find({"tenant._id":id})
-          // console.log("hi",user);
 
         } 
-        if (!user | user == null || user.length == 0){
-
+        if (!user | user == null | user.length == 0){
           user = await UserModal.find({"owner._id":id})
         } 
 
@@ -258,6 +275,7 @@ console.log(1);
         next(createHttpError(500, 'User not found'))
 
       } 
+      // console.log("HI",user);
 
       req.profile = user;
       next();

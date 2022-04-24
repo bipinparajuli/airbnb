@@ -6,10 +6,13 @@ import { sendToken } from '../utils/sendToken.js'
 import UserModal from '../models/user.model.js'
 import { catchAsync } from '../utils/catchAsync.js'
 import { sendMail } from '../utils/mailer.js'
+import { sendVerificationEmail } from '../utils/commonFunction.js'
+
 
 
 const signup = catchAsync(async (req, res, next) => {
   const form = new formidable.IncomingForm()
+  const baseurl = req.protocol + "://" + req.get("host");
 
 
   form.parse(req, (err, fields, files) => {
@@ -40,7 +43,12 @@ const signup = catchAsync(async (req, res, next) => {
         product.save((err, product) => {
             console.log(err);
           if (err) return next(createHttpError(400, 'Could not save user!!'));
-          res.json(product);
+
+          if(product){
+            sendVerificationEmail(product.email,baseurl,product._id)
+            res.json(product);
+
+          }
         });
     }
     if(tenant){
@@ -94,6 +102,16 @@ export const login = catchAsync(async (req, res, next) => {
 
     // check whether user with provided email exists or not
     if (!user) return next(createHttpError('400', 'Invalid credentials'))
+    
+
+        if(user.status !== "active"){
+            return res.json({
+              success:false,
+              error: "Please verify you email"
+            });
+      
+          }
+    
     // check whether user's password matches the one provided
     if (!(await user.comparePassword(password)))
     {
@@ -102,7 +120,7 @@ export const login = catchAsync(async (req, res, next) => {
 
     }
     // if all the credentials are valid, login the user
-    sendToken(user.id, 'Logged in successfully', res, next)
+    sendToken(user.id,user.role,'Logged in successfully', res, next)
 })
 export const requestPasswordReset = catchAsync(async (req, res, next) => {
     const { email } = req.body

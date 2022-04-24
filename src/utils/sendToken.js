@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import createHttpError from 'http-errors'
 
-export const sendToken = (userId, message, res, next) => {
+export const sendToken = (userId,role,message, res, next) => {
     try {
         const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
             expiresIn: '1h',
@@ -16,7 +16,8 @@ export const sendToken = (userId, message, res, next) => {
             message,
             data: {
                 token,
-                id:userId
+                id:userId,
+                role:role
             },
         })
     } catch (error) {

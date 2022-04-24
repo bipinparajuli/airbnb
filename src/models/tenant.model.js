@@ -9,6 +9,23 @@ export const TenantSchema = new Schema({
         enum: ['Student', 'Employeed', 'Retired', 'Other'],
         required: [true, 'Occupation is required'],
     },
+    iam: {
+        type: String,
+        enum: ['Male', 'Female','Couple'],
+        required: [true, 'iam is required'],
+    },
+    age:{
+        type:Number
+    },
+    facilities:{
+        type:Array}
+    ,
+    name:{
+        type:String
+    },
+    tenantemail:{
+type:String
+    },
     preferredRooms: {
         ...CommonRoomDetails,
         availableWithin: {
