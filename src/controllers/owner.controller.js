@@ -244,12 +244,17 @@ console.log(1);
       console.log(id);
     let user = await UserModal.findById(id)
 
-      // console.log("USER",user);
   
 
     // , (err, user) => {
         // console.log(user,err);
         // console.log(user);
+
+        if (!user | user == null){
+          user = await UserModal.find({"owner._id":id})
+
+        } 
+
         if (!user | user == null){
 
           user ={
@@ -262,14 +267,14 @@ console.log(1);
           user = await TenantModal.findById(id)
 
         } 
-        if (!user | user == null){
+        console.log("USER",user);
+
+        if (!user | user == null | user.length == 0){
 
           user = await UserModal.find({"tenant._id":id})
 
         } 
-        if (!user | user == null | user.length == 0){
-          user = await UserModal.find({"owner._id":id})
-        } 
+       
 
       if (!user){
         next(createHttpError(500, 'User not found'))
