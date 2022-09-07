@@ -113,19 +113,18 @@ export const login = catchAsync(async (req, res, next) => {
         return next(createHttpError(400, 'Please provide email and password'))
     }
     const user = await UserModal.findOne({ email }).select('+password')
-    console.log(user);
 
     // check whether user with provided email exists or not
     if (!user) return next(createHttpError('400', 'Invalid credentials'))
     
 
-        if(user.status !== "active"){
-            return res.json({
-              success:false,
-              error: "Please verify you email"
-            });
+        // if(user.status !== "active"){
+        //     return res.json({
+        //       success:false,
+        //       error: "Please verify you email"
+        //     });
       
-          }
+        //   }
     
     // check whether user's password matches the one provided
     if (!(await user.comparePassword(password)))

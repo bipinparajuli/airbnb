@@ -1,6 +1,8 @@
 import createHttpError from 'http-errors'
 import formidable from "formidable"
 import fs from 'fs'
+import AWS from 'aws-sdk'
+
 
 import { catchAsync } from '../utils/catchAsync.js'
 import UserModal from '../models/user.model.js'
@@ -291,13 +293,16 @@ console.log(1);
     const form = new formidable.IncomingForm()
 
 
-  form.parse(req, (err, fields, files) => {
+  form.parse(req, async(err, fields, files) => {
     console.log('hi',files);
 
     if (err) return next(createHttpError(400, 'Could not process image!!'))
     let { owner} = fields;
     if(owner){
-
+      const s3 = new AWS.S3({
+        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+      })
         fields.owner = JSON.parse(owner)
         // JSON.parse(owner)
         // console.log(fields.owner);
@@ -305,7 +310,6 @@ console.log(1);
         fields.owner.images =""
         const product = new OwnerModal(fields.owner);
 
-        console.log(product);
 
         // product.owner.images = ""
     
@@ -313,12 +317,17 @@ console.log(1);
           if (files.images.size > 2097152)
             return next(createHttpError(400, 'Image size exceeds 2mb!!'))
         //   console.log(files.images)
-          product.images.data = fs.readFileSync(files.images.filepath);
-          product.images.contentType = files.images.mimetype;
-        console.log(product.images.data);
+          const blob = fs.readFileSync(files.images.filepath);
+          const uploadedImage = await s3.upload({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: files.images.originalFilename,
+            Body: blob,
+            ACL: 'public-read'
+          }).promise()
+          product.images = uploadedImage.Location;
+
         }
     
-        console.log(product);
         // res.json()
     
         product.save((err, product) => {
@@ -340,7 +349,6 @@ export const deleteRoom = catchAsync(async (req, res, next) =>{
 
   if(req.room && req.roommodel){
     OwnerModal.deleteOne({_id:req.roommodel._id},(err,data)=>{
-      console.log(data);
       if (err) return next(createHttpError(400, 'Could not delete room!!'))
 
         else return res.status(200).send("Room deleted succesfully");
