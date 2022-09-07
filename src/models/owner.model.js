@@ -43,12 +43,8 @@ export const OwnerSchema = new Schema({
 type:String
     },
     images: {
-        data: Buffer,
-        // type:Buffer,
-        contentType: String
-        // type: [String],
-        // required: [true, 'Images are required'],
-    },
+        type:String
+    }
 })
 
 const OwnerModal = mongoose.model('Owner', OwnerSchema)

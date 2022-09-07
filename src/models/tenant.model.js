@@ -53,9 +53,7 @@ type:String
             required: [true, 'Bio is required'],
         },
         images: {
-            data: Buffer,
-        // type:Buffer,
-        contentType: String
+        type:String,
         },
     },
 })

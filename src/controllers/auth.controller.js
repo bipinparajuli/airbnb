@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors'
 import formidable from "formidable"
 import fs from 'fs'
+import AWS from 'aws-sdk'
 
 import { sendToken } from '../utils/sendToken.js'
 import UserModal from '../models/user.model.js'
@@ -14,8 +15,11 @@ const signup = catchAsync(async (req, res, next) => {
   const form = new formidable.IncomingForm()
   const baseurl = req.protocol + "://" + req.get("host");
 
-
-  form.parse(req, (err, fields, files) => {
+  const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+  })
+  form.parse(req, async (err, fields, files) => {
 
     if (err) return next(createHttpError(400, 'Could not process image!!'))
     let { owner,tenant} = fields;
@@ -33,9 +37,14 @@ const signup = catchAsync(async (req, res, next) => {
           if (files.images.size > 2097152)
             return next(createHttpError(400, 'Image size exceeds 2mb!!'))
         //   console.log(files.images)
-          product.owner.images.data = fs.readFileSync(files.images.filepath);
-          product.owner.images.contentType = files.images.mimetype;
-        console.log(product.owner.images.data);
+          const blob = fs.readFileSync(files.images.filepath);
+          const uploadedImage = await s3.upload({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: files.images.originalFilename,
+            Body: blob,
+            ACL: 'public-read'
+          }).promise()
+           product.owner.images=uploadedImage.Location
         }
     
         // res.json()
@@ -64,8 +73,14 @@ const signup = catchAsync(async (req, res, next) => {
           if (files.images.size > 2097152)
             return next(createHttpError(400, 'Image size exceeds 2mb!!'))
         //   console.log(files.images)
-          product.tenant.profileDescription.images.data = fs.readFileSync(files.images.filepath);
-          product.tenant.profileDescription.images.contentType = files.images.mimetype;
+          const blob = fs.readFileSync(files.images.filepath);
+          const uploadedImage = await s3.upload({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: files.images.originalFilename,
+            Body: blob,
+            ACL: 'public-read'
+          }).promise()
+           product.tenant.profileDescription.images=uploadedImage.Location
         // console.log(product.owner.images.data);
         }
     
